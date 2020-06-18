@@ -143,13 +143,16 @@
   <ItemGroup>
     <ClCompile Include="..\src\client\ClientMain.cpp" />
     <ClCompile Include="..\src\client\RCClient.cpp" />
-    <ClCompile Include="..\src\utils\RCSocket.cpp" />
+    <ClCompile Include="..\src\utils\RCClientSocket.cpp" />
+    <ClCompile Include="..\src\utils\RCSocketCore.cpp" />
     <ClCompile Include="..\src\utils\RCThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\client\RCClient.hpp" />
+    <ClInclude Include="..\src\utils\RCClientSocket.hpp" />
     <ClInclude Include="..\src\utils\RCDefines.hpp" />
     <ClInclude Include="..\src\utils\RCSocket.hpp" />
+    <ClInclude Include="..\src\utils\RCSocketCore.hpp" />
     <ClInclude Include="..\src\utils\RCThread.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

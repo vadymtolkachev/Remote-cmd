@@ -1,12 +1,15 @@
 #include "RCClient.hpp"
 
-const char addr_str[] = "192.168.1.10";
 
-
-int main()
+int main(int argc, char **argv)
 {
-    RCClient client;
-    client.start(addr_str, serverPort);
+    if(argc != 2)
+    {
+        printf("usage: client.exe server-ip\n");
+        return EXIT_FAILURE;
+    }
+
+    RCClient().start(argv[1], serverPort);
 
     printf("EXIT_SUCCESS\n");
     return EXIT_SUCCESS;

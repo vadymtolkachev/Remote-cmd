@@ -141,19 +141,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\server\RCChildProcess.hpp" />
     <ClInclude Include="..\src\server\RCServer.hpp" />
+    <ClInclude Include="..\src\server\RCServerSrv.hpp" />
     <ClInclude Include="..\src\server\RCWorker.hpp" />
+    <ClInclude Include="..\src\utils\RCChildProcess.hpp" />
     <ClInclude Include="..\src\utils\RCDefines.hpp" />
+    <ClInclude Include="..\src\utils\RCListenSocket.hpp" />
+    <ClInclude Include="..\src\utils\RCServerSocket.hpp" />
+    <ClInclude Include="..\src\utils\RCService.hpp" />
     <ClInclude Include="..\src\utils\RCSocket.hpp" />
+    <ClInclude Include="..\src\utils\RCSocketCore.hpp" />
     <ClInclude Include="..\src\utils\RCThread.hpp" />
+    <ClInclude Include="..\src\utils\SrvError.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\server\RCChildProcess.cpp" />
     <ClCompile Include="..\src\server\RCServer.cpp" />
+    <ClCompile Include="..\src\server\RCServerSrv.cpp" />
     <ClCompile Include="..\src\server\RCWorker.cpp" />
     <ClCompile Include="..\src\server\ServerMain.cpp" />
-    <ClCompile Include="..\src\utils\RCSocket.cpp" />
+    <ClCompile Include="..\src\utils\RCChildProcess.cpp" />
+    <ClCompile Include="..\src\utils\RCListenSocket.cpp" />
+    <ClCompile Include="..\src\utils\RCServerSocket.cpp" />
+    <ClCompile Include="..\src\utils\RCService.cpp" />
+    <ClCompile Include="..\src\utils\RCSocketCore.cpp" />
     <ClCompile Include="..\src\utils\RCThread.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -47,7 +47,7 @@ enum class RCRet
 }
 
 
-//#define NO_DBG_PRINT
+#define NO_DBG_PRINT
 
 
 #ifndef NO_DBG_PRINT

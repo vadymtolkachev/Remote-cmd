@@ -98,7 +98,9 @@ DWORD WINAPI RCWorker::StdoutThreadFunc(LPVOID lpvParam) noexcept
         DBG_PUTS("send");
         ret = worker->m_serverSocket.send(buf, static_cast<int>(bytesReceived));
         if(ret != RCRet::SUCCESS)
+        {
             DBG_PUTS("server->m_socket.send failure");
+        }
 
         if(ret == RCRet::CONNECTION_CLOSED)
         {

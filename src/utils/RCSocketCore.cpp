@@ -1,10 +1,12 @@
-#include "utils/RCSocket.hpp"
-
-WSADATA RCSocket::m_wsaData = {};
-bool RCSocket::m_wsaIsInitialized = false;
+#include "RCSocketCore.hpp"
 
 
-RCSocket::RCSocket():
+
+WSADATA RCSocketCore::m_wsaData = {};
+bool RCSocketCore::m_wsaIsInitialized = false;
+
+
+RCSocketCore::RCSocketCore():
 	m_socket(INVALID_SOCKET)
 {
 	if(!m_wsaIsInitialized)
@@ -24,7 +26,7 @@ RCSocket::RCSocket():
 }
 
 
-void RCSocket::wsaDestr() noexcept
+void RCSocketCore::wsaDestr() noexcept
 {
 	if(m_wsaIsInitialized)
 	{
@@ -40,14 +42,14 @@ void RCSocket::wsaDestr() noexcept
 }
 
 
-RCSocket::~RCSocket()
+RCSocketCore::~RCSocketCore()
 {
 	if(m_socket != INVALID_SOCKET)
 		closeSocket();
 }
 
 
-RCRet RCSocket::listen(const UINT16 port)
+RCRet RCSocketCore::listen(const UINT16 port)
 {
 	struct addrinfo *result = NULL;
 	struct addrinfo hints;
@@ -104,7 +106,7 @@ RCRet RCSocket::listen(const UINT16 port)
 }
 
 
-RCRet RCSocket::accept(RCSocket *socket)
+RCRet RCSocketCore::accept(RCSocketCore *socket)
 {
 	assert(m_socket != INVALID_SOCKET);
 	assert(socket->m_socket == INVALID_SOCKET);
@@ -124,7 +126,7 @@ RCRet RCSocket::accept(RCSocket *socket)
 }
 
 
-RCRet RCSocket::connect(const char addr_str[], const UINT16 port)
+RCRet RCSocketCore::connect(const char addr_str[], const UINT16 port)
 {
 	struct addrinfo *result = NULL,
 		*ptr = NULL,
@@ -184,13 +186,13 @@ RCRet RCSocket::connect(const char addr_str[], const UINT16 port)
 }
 
 
-RCRet RCSocket::send(const char buf[], int length) const
+RCRet RCSocketCore::send(const char buf[], int length) const
 {
 	int iResult = ::send(m_socket, buf, length, 0);
 	if(iResult == SOCKET_ERROR)
 	{
 		int error = WSAGetLastError();
-		
+
 		if(error == WSAECONNRESET)
 		{
 			printf("Connection closed\n");
@@ -198,7 +200,7 @@ RCRet RCSocket::send(const char buf[], int length) const
 		}
 
 		DBG_PRINTF("send failed with error: %d\n", error);
-		
+
 		return RCRet::FAILURE;
 	}
 
@@ -206,7 +208,7 @@ RCRet RCSocket::send(const char buf[], int length) const
 }
 
 
-RCRet RCSocket::recv(char buf[], int length, int *bytesReceived) const
+RCRet RCSocketCore::recv(char buf[], int length, int *bytesReceived) const
 {
 	int iResult = ::recv(m_socket, buf, length, 0);
 	if(iResult <= 0)
@@ -231,7 +233,7 @@ RCRet RCSocket::recv(char buf[], int length, int *bytesReceived) const
 }
 
 
-void RCSocket::shutdown()
+void RCSocketCore::shutdown()
 {
 	DBG_PUTS("RCSocket::shutdown()");
 	int iResult = ::shutdown(m_socket, SD_BOTH);
@@ -244,14 +246,14 @@ void RCSocket::shutdown()
 }
 
 
-void RCSocket::shutdownSafe()
+void RCSocketCore::shutdownSafe()
 {
 	if(m_socket != INVALID_SOCKET)
 		shutdown();
 }
 
 
-void RCSocket::closeSocket()
+void RCSocketCore::closeSocket()
 {
 	DBG_PUTS("RCSocket::closeSocket()");
 	int iResult = closesocket(m_socket);
@@ -265,76 +267,8 @@ void RCSocket::closeSocket()
 }
 
 
-void RCSocket::closeSocketSafe()
+void RCSocketCore::closeSocketSafe()
 {
 	if(m_socket != INVALID_SOCKET)
 		closeSocket();
 }
-
-
-RCRet RCListenSocket::listen(const UINT16 port)
-{
-	return m_socket.listen(port);
-}
-
-
-RCRet RCListenSocket::accept(RCServerSocket *serverSocket)
-{
-	return m_socket.accept(&serverSocket->m_socket);
-}
-
-
-void RCListenSocket::close()
-{
-	m_socket.closeSocketSafe();
-}
-
-
-RCServerSocket::~RCServerSocket()
-{
-	m_socket.shutdownSafe();
-}
-
-
-RCRet RCServerSocket::send(const char buf[], int length) const
-{
-	return m_socket.send(buf, length);
-}
-
-
-RCRet RCServerSocket::recv(char buf[], int length, int *bytesReceived) const
-{
-	return m_socket.recv(buf, length, bytesReceived);
-}
-
-
-void RCServerSocket::close()
-{
-	m_socket.shutdown();
-	m_socket.closeSocket();
-}
-
-
-RCClientSocket::~RCClientSocket()
-{
-	m_socket.shutdownSafe();
-}
-
-
-RCRet RCClientSocket::send(const char buf[], int length) const
-{
-	return m_socket.send(buf, length);
-}
-
-
-RCRet RCClientSocket::recv(char buf[], int length, int *bytesReceived) const
-{
-	return m_socket.recv(buf, length, bytesReceived);
-}
-
-
-RCRet RCClientSocket::connect(const char addr_str[], const UINT16 port)
-{
-	return m_socket.connect(addr_str, port);
-}
-

@@ -1,21 +1,32 @@
 #include "RCServer.hpp"
 
 
-void RCServer::start(const UINT16 port)
+RCServer::RCServer(const UINT16 port):
+    m_listenSocket(),
+    m_workerHandlers(),
+    m_svcStopPendingEvent(NULL),
+    m_port(port)
+{}
+
+
+void RCServer::start(HANDLE pSvcStopPendingEvent)
 {
     DBG_PUTS("RCServer::start start");
+    assert(pSvcStopPendingEvent != NULL);
+
+    m_svcStopPendingEvent = pSvcStopPendingEvent;
 
     RCWorker *worker;
     void *lpvWorker;
     RCServerSocket *serverSocket;
-    RCThread *workerHandlerThread;
-    
+    RCThread *workerHandlerThread; 
 
-    DBG_CALL_CRITICAL(m_listenSocket.listen(port));
+    assert(m_port != 0);
+
+    DBG_CALL_CRITICAL(m_listenSocket.listen(m_port));
 
     RCThread eventListener;
-
-    eventListener.start(EventListener, static_cast<void *>(this));
+    eventListener.start(SrvEventListener, static_cast<void *>(this));
 
     while(true)
     {
@@ -37,6 +48,8 @@ void RCServer::start(const UINT16 port)
     }
 
     freeHandlers();
+
+    delete this;
 
     DBG_PUTS("RCServer::start end");
 }
@@ -75,7 +88,22 @@ DWORD WINAPI RCServer::WorkerHandler(LPVOID lpvParam) noexcept
 }
 
 
-DWORD WINAPI RCServer::EventListener(LPVOID lpvParam) noexcept
+DWORD WINAPI RCServer::SrvEventListener(LPVOID lpvParam) noexcept
+{
+    assert(lpvParam != nullptr);
+    if(lpvParam == nullptr)
+        return 0;
+
+    RCServer *server = static_cast<RCServer *>(lpvParam);
+
+    WaitForSingleObject(server->m_svcStopPendingEvent, INFINITE);
+    server->m_listenSocket.close();
+
+    return 0;
+}
+
+
+DWORD WINAPI RCServer::CmdEventListener(LPVOID lpvParam) noexcept
 {
     assert(lpvParam != nullptr);
     if(lpvParam == nullptr)
@@ -96,6 +124,7 @@ DWORD WINAPI RCServer::EventListener(LPVOID lpvParam) noexcept
 
         printf("invalid command\n");
     }
+
 
     return 0;
 }

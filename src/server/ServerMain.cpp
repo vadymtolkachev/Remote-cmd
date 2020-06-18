@@ -1,10 +1,9 @@
-#include "RCServer.hpp"
+#include "RCServerSrv.hpp"
 
 
 int main()
 {
-    RCServer server;
-    server.start(serverPort);
+    RCServerSrv::init(serverPort);
 
     printf("EXIT_SUCCESS\n");
     return EXIT_SUCCESS;
