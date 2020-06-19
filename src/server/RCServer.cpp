@@ -49,8 +49,6 @@ void RCServer::start(HANDLE pSvcStopPendingEvent)
 
     freeHandlers();
 
-    delete this;
-
     DBG_PUTS("RCServer::start end");
 }
 
